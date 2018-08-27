@@ -8,7 +8,10 @@ tool should be run after `go mod vendor`.
 
 ## Usage
 
-`modvendor -copy="**/*.c **/*.h **/*.proto" -v`
+```
+$ GO111MODULE=on go mod vendor
+$ modvendor -copy="**/*.c **/*.h **/*.proto" -v
+```
 
 ## LICENSE
 
