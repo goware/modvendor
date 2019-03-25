@@ -67,13 +67,6 @@ func main() {
 		line := scanner.Text()
 
 		if line[0] == 35 {
-			// split input to use replace path if there is one
-			parts := strings.Split(line, "=>")
-			// remove leading spaces
-			line = strings.TrimLeft(
-				parts[len(parts)-1],
-				" ",
-			)
 			s := strings.Split(line, " ")
 
 			// use "relative" indexes, a replace line doesn't have a leading # value in its parts
