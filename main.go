@@ -20,11 +20,13 @@ var (
 )
 
 type Mod struct {
-	ImportPath string
-	Version    string
-	Dir        string          // full path, $GOPATH/pkg/mod/
-	Pkgs       []string        // sub-pkg import paths
-	VendorList map[string]bool // files to vendor
+	ImportPath    string
+	SourcePath    string
+	Version       string
+	SourceVersion string
+	Dir           string          // full path, $GOPATH/pkg/mod/
+	Pkgs          []string        // sub-pkg import paths
+	VendorList    map[string]bool // files to vendor
 }
 
 func main() {
@@ -73,7 +75,14 @@ func main() {
 				ImportPath: s[1],
 				Version:    s[2],
 			}
-			mod.Dir = pkgModPath(mod.ImportPath, mod.Version)
+			// Handle "replace" in module file if any
+			if len(s) > 3 && s[3] == "=>" {
+				mod.SourcePath = s[4]
+				mod.SourceVersion = s[5]
+				mod.Dir = pkgModPath(mod.SourcePath, mod.SourceVersion)
+			} else {
+				mod.Dir = pkgModPath(mod.ImportPath, mod.Version)
+			}
 
 			if _, err := os.Stat(mod.Dir); os.IsNotExist(err) {
 				fmt.Printf("Error! %s module path does not exist, check $GOPATH/pkg/mod", mod.Dir)
