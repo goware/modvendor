@@ -34,7 +34,7 @@ func main() {
 
 	// Ensure go.mod file exists and we're running from the project root,
 	// and that ./vendor/modules.txt file exists.
-	cwd, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	cwd, err := os.Getwd()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
