@@ -58,6 +58,10 @@ func main() {
 
 	// Parse/process modules.txt file of pkgs
 	f, _ := os.Open(modtxtPath)
+	if err != nil {
+		fmt.Printf("could not open %q: error %v", modtxtPath, err)
+		os.Exit(1)
+	}
 	defer f.Close()
 	scanner := bufio.NewScanner(f)
 	scanner.Split(bufio.ScanLines)
@@ -68,9 +72,15 @@ func main() {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		if line[0] == 35 {
+		if line[0] == '#' {
+			if line == "## explicit" {
+				continue
+			}
 			s := strings.Split(line, " ")
 
+			if len(s) < 3 {
+				panic(fmt.Sprintf("could not parse modules.txt line %q: expected at least three words", line))
+			}
 			mod = &Mod{
 				ImportPath: s[1],
 				Version:    s[2],
