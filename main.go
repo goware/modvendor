@@ -75,6 +75,11 @@ func main() {
 				ImportPath: s[1],
 				Version:    s[2],
 			}
+			if s[2] == "=>" {
+				// issue https://github.com/golang/go/issues/33848 added these,
+				// see comments. I think we can get away with ignoring them.
+				continue
+			}
 			// Handle "replace" in module file if any
 			if len(s) > 3 && s[3] == "=>" {
 				mod.SourcePath = s[4]
@@ -85,7 +90,7 @@ func main() {
 			}
 
 			if _, err := os.Stat(mod.Dir); os.IsNotExist(err) {
-				fmt.Printf("Error! %s module path does not exist, check $GOPATH/pkg/mod", mod.Dir)
+				fmt.Printf("Error! %q module path does not exist, check $GOPATH/pkg/mod\n", mod.Dir)
 				os.Exit(1)
 			}
 
