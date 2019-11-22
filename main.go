@@ -83,8 +83,19 @@ func main() {
 			// Handle "replace" in module file if any
 			if len(s) > 3 && s[3] == "=>" {
 				mod.SourcePath = s[4]
-				mod.SourceVersion = s[5]
-				mod.Dir = pkgModPath(mod.SourcePath, mod.SourceVersion)
+
+				// Handle replaces with a relative target. For example:
+				// "replace github.com/status-im/status-go/protocol => ./protocol"
+				if strings.HasPrefix(s[4], ".") || strings.HasPrefix(s[4], "/") {
+					mod.Dir, err = filepath.Abs(s[4])
+					if err != nil {
+						fmt.Printf("invalid relative path: %v", err)
+						os.Exit(1)
+					}
+				} else {
+					mod.SourceVersion = s[5]
+					mod.Dir = pkgModPath(mod.SourcePath, mod.SourceVersion)
+				}
 			} else {
 				mod.Dir = pkgModPath(mod.ImportPath, mod.Version)
 			}
