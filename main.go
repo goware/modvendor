@@ -70,6 +70,9 @@ func main() {
 
 		if line[0] == 35 {
 			s := strings.Split(line, " ")
+			if len(s) != 3 || s[1] == "explicit" {
+				continue
+			}
 
 			mod = &Mod{
 				ImportPath: s[1],
