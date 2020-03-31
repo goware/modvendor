@@ -4,13 +4,14 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"github.com/coreos/go-semver/semver"
+	"github.com/mattn/go-zglob"
 	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"unicode"
-
-	zglob "github.com/mattn/go-zglob"
 )
 
 var (
@@ -70,7 +71,7 @@ func main() {
 
 		if line[0] == 35 {
 			s := strings.Split(line, " ")
-			if len(s) != 3 || s[1] == "explicit" {
+			if semver.New("1.14.0").LessThan(*semver.New(strings.Replace(runtime.Version(), "go", "", -1))) && len(s) != 3 || s[1] == "explicit" {
 				continue
 			}
 

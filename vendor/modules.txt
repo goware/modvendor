@@ -1,4 +1,5 @@
+# github.com/coreos/go-semver v0.3.0
+github.com/coreos/go-semver/semver
 # github.com/mattn/go-zglob v0.0.2-0.20191112051448-a8912a37f9e7
-## explicit
 github.com/mattn/go-zglob
 github.com/mattn/go-zglob/fastwalk
