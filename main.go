@@ -70,7 +70,7 @@ func main() {
 
 		if line[0] == 35 {
 			s := strings.Split(line, " ")
-			if len(s) != 3 || s[1] == "explicit" {
+			if s[1] == "explicit" { // Support for new 1.14 keyword
 				continue
 			}
 
@@ -105,6 +105,10 @@ func main() {
 			continue
 		}
 
+		// Prevent panic
+		if mod == nil {
+			continue
+		}
 		mod.Pkgs = append(mod.Pkgs, line)
 	}
 
