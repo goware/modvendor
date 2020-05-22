@@ -70,7 +70,7 @@ func main() {
 
 		if line[0] == 35 {
 			s := strings.Split(line, " ")
-			if len(s) != 3 || s[1] == "explicit" {
+			if (len(s) != 6 && len(s) != 3) || s[1] == "explicit" {
 				continue
 			}
 
