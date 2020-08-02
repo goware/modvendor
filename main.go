@@ -75,7 +75,7 @@ func main() {
 
 		if line[0] == 35 {
 			s := strings.Split(line, " ")
-			if (len(s) != 6 && len(s) != 3) || s[1] == "explicit" {
+			if (len(s) != 5 && len(s) != 6 && len(s) != 3) || s[1] == "explicit" {
 				continue
 			}
 
@@ -90,9 +90,16 @@ func main() {
 			}
 			// Handle "replace" in module file if any
 			if len(s) > 3 && s[3] == "=>" {
-				mod.SourcePath = s[4]
-				mod.SourceVersion = s[5]
-				mod.Dir = pkgModPath(mod.SourcePath, mod.SourceVersion)
+				switch(len(s)) {
+				case 5:
+					mod.SourcePath = s[4]
+					mod.SourceVersion = s[2]
+					mod.Dir = filepath.Join(cwd, s[4])
+				case 6:
+					mod.SourcePath = s[4]
+					mod.SourceVersion = s[5]
+					mod.Dir = pkgModPath(mod.SourcePath, mod.SourceVersion)
+				}				
 			} else {
 				mod.Dir = pkgModPath(mod.ImportPath, mod.Version)
 			}
