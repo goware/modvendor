@@ -104,6 +104,17 @@ func main() {
 				mod.Dir = pkgModPath(mod.ImportPath, mod.Version)
 			}
 
+			ignore := true
+			for _, dir := range additionalDirsToInclude {
+				if strings.HasPrefix(dir, mod.ImportPath) {
+					ignore = false
+				}
+			}
+
+			if ignore {
+				continue
+			}
+
 			if _, err := os.Stat(mod.Dir); os.IsNotExist(err) {
 				fmt.Printf("Error! %q module path does not exist, check $GOPATH/pkg/mod\n", mod.Dir)
 				os.Exit(1)
