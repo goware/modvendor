@@ -21,6 +21,7 @@ var (
 		"include",
 		"",
 		`specifies additional directories to copy into ./vendor/ which are not specified in ./vendor/modules.txt. Multiple directories can be included by comma separation e.g. -include:github.com/a/b/dir1,github.com/a/b/dir1/dir2`)
+	excludeGoTestFiles = flags.Bool("excludeGoTestFiles", false, "exclude copying go test files to ./vendor folder")
 )
 
 type Mod struct {
@@ -177,6 +178,9 @@ func buildModVendorList(copyPat []string, mod *Mod) map[string]bool {
 		}
 
 		for _, m := range matches {
+			if *excludeGoTestFiles && strings.Index(m, "_test.go") > 0 {
+				continue
+			}
 			vendorList[m] = false
 		}
 	}
