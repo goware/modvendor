@@ -202,6 +202,17 @@ func importPathIntersect(basePath, pkgPath string) string {
 	return pkgPath[len(basePath):]
 }
 
+func normString(str string) (normStr string) {
+	for _, char := range str {
+		if unicode.IsUpper(char) {
+			normStr += "!" + string(unicode.ToLower(char))
+		} else {
+			normStr += string(char)
+		}
+	}
+	return
+}
+
 func pkgModPath(importPath, version string) string {
 	goPath := os.Getenv("GOPATH")
 	if goPath == "" {
@@ -209,17 +220,10 @@ func pkgModPath(importPath, version string) string {
 		goPath = filepath.Join(os.Getenv("HOME"), "go")
 	}
 
-	var normPath string
+	normPath := normString(importPath)
+	normVersion := normString(version)
 
-	for _, char := range importPath {
-		if unicode.IsUpper(char) {
-			normPath += "!" + string(unicode.ToLower(char))
-		} else {
-			normPath += string(char)
-		}
-	}
-
-	return filepath.Join(goPath, "pkg", "mod", fmt.Sprintf("%s@%s", normPath, version))
+	return filepath.Join(goPath, "pkg", "mod", fmt.Sprintf("%s@%s", normPath, normVersion))
 }
 
 func copyFile(src, dst string) (int64, error) {
