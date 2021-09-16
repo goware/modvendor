@@ -79,9 +79,10 @@ func main() {
 				continue
 			}
 
+			// use "relative" indexes, a replace line doesn't have a leading # value in its parts
 			mod = &Mod{
-				ImportPath: s[1],
-				Version:    s[2],
+				ImportPath: s[len(s)-2],
+				Version:    s[len(s)-1],
 			}
 			if s[2] == "=>" {
 				// issue https://github.com/golang/go/issues/33848 added these,
