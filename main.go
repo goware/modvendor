@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"go/build"
 	"io"
 	"os"
 	"path/filepath"
@@ -102,10 +103,20 @@ func main() {
 					}
 				} else {
 					mod.SourceVersion = s[5]
-					mod.Dir = pkgModPath(mod.SourcePath, mod.SourceVersion)
+					dir, err := pkgModPath(mod.SourcePath)
+					if err != nil {
+						fmt.Printf("Error! couldn't resolve module path for %q: %v\n", mod.SourcePath, err)
+						os.Exit(1)
+					}
+					mod.Dir = dir
 				}
 			} else {
-				mod.Dir = pkgModPath(mod.ImportPath, mod.Version)
+				dir, err := pkgModPath(mod.ImportPath)
+				if err != nil {
+					fmt.Printf("Error! couldn't resolve module path for %q: %v\n", mod.ImportPath, err)
+					os.Exit(1)
+				}
+				mod.Dir = dir
 			}
 
 			if _, err := os.Stat(mod.Dir); os.IsNotExist(err) {
@@ -213,17 +224,12 @@ func normString(str string) (normStr string) {
 	return
 }
 
-func pkgModPath(importPath, version string) string {
-	goPath := os.Getenv("GOPATH")
-	if goPath == "" {
-		// the default GOPATH for go v1.11
-		goPath = filepath.Join(os.Getenv("HOME"), "go")
+func pkgModPath(importPath string) (string, error) {
+	pkg, err := build.Default.Import(importPath, "", build.IgnoreVendor)
+	if err != nil {
+		return "", err
 	}
-
-	normPath := normString(importPath)
-	normVersion := normString(version)
-
-	return filepath.Join(goPath, "pkg", "mod", fmt.Sprintf("%s@%s", normPath, normVersion))
+	return pkg.SrcRoot, nil
 }
 
 func copyFile(src, dst string) (int64, error) {
